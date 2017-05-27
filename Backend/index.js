@@ -5,15 +5,23 @@ var app = express();
 var router = express.Router();
 var port = 8088;
 {
-    console.log("People starting to visit");
+    console.log("Port OK");
 }
 
 var request = require('request');
 
-app.all("/legislators", function(req, res){
+function setHeader(res)
+{
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+ 
+}
+
+app.all("/legislators", function(req, res){
+
+     
+    setHeader(res)
     console.log("request for legislators")
      request('http://congress.api.sunlightfoundation.com/legislators?per_page=100&apikey=1b18e2b4ba5b4865b27980b39d7f47b9', function (error, response, body) {
         if (error && response.statusCode != 200) {
@@ -30,9 +38,9 @@ app.all("/legislators", function(req, res){
 });
 
 app.all("/legislators/:type",function(req, res){
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+ 
+     
+setHeader(res)
     var type=req.params.type;
     console.log("Request for legislators in "+type);
     // if(type == both)
@@ -53,9 +61,9 @@ app.all("/legislators/:type",function(req, res){
 
 app.all("/committees/:type", function(req, res){
     var type=req.params.type;
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+ 
+     
+    setHeader(res)
     console.log("Request for Committees in "+type);
     request('http://congress.api.sunlightfoundation.com/committees?chamber='+type+'&per_page=50&apikey=1b18e2b4ba5b4865b27980b39d7f47b9', function (error, response, body) {
         if (error && response.statusCode != 200) {
@@ -73,9 +81,9 @@ app.all("/committees/:type", function(req, res){
 
 app.all("/bills/:type", function(req, res){
     var type=req.params.type;
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+ 
+     
+    setHeader(res)
     console.log("Request for bills of "+type);
     var url;
     if(type=="active")
@@ -99,9 +107,9 @@ app.all("/bills/:type", function(req, res){
 
 app.all("/legisComm/:id", function(req, res){
     var id = req.params.id;
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+ 
+     
+    setHeader(res)
     url = "http://congress.api.sunlightfoundation.com/committees?per_page=5&apikey=1b18e2b4ba5b4865b27980b39d7f47b9&member_ids="+id
     request(url, function (error, response, body) {
         // console.log(response);
@@ -120,9 +128,9 @@ app.all("/legisComm/:id", function(req, res){
 
 app.all("/legisBill/:id", function(req, res){
     var id = req.params.id;
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+ 
+     
+    setHeader(res)
     url = "http://congress.api.sunlightfoundation.com/bills?per_page=5&apikey=1b18e2b4ba5b4865b27980b39d7f47b9&sponsor_id="+id
     request(url, function (error, response, body) {
         // console.log(response);
@@ -140,13 +148,10 @@ app.all("/legisBill/:id", function(req, res){
 })
 
 
-app.all("/", function(req, res){
-
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, POST","PUT");
+app.all("/", function(req, res){   
+    setHeader(res)
     console.log("This is not a valid point");
-    return res.status(500).send("<h1>Do not try to cheat</h1>");
+    return res.status(500).send("<h1>Invalid End point</h1>");
     
 });
 
