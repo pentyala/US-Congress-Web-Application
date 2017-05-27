@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html ng-app="congress" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>US Congress</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <style type="text/css">
+
+    #wrapper {
+      padding-left: 0;
+      padding-top:50px;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+    }
+
+    #wrapper.toggled {
+      padding-left: 250px;
+    }
+
+    #sidebar-wrapper {
+      z-index: 1000;
+      position: fixed;
+      left: 250px;
+      width: 0;
+      height: 100%;
+      margin-left: -250px;
+      overflow-y: auto;
+      background: #000;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+      width: 250px;
+    }
+
+    #page-content-wrapper {
+      width: 100%;
+      position: absolute;
+      padding: 15px;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+      position: absolute;
+      margin-right: -250px;
+    }
+
+    /* Sidebar Styles */
+
+    .sidebar-nav {
+      position: absolute;
+      top: 0;
+      width: 250px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      text-indent: 20px;
+      line-height: 40px;
+    }
+
+    .sidebar-nav li a {
+      display: block;
+      text-decoration: none;
+      color: #999999;
+    }
+
+    .sidebar-nav li a:hover {
+      text-decoration: none;
+      color: #fff;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .sidebar-nav li a:active,
+    .sidebar-nav li a:focus {
+      text-decoration: none;
+    }
+
+    .sidebar-nav > .sidebar-brand {
+      height: 65px;
+      font-size: 18px;
+      line-height: 60px;
+    }
+
+    .sidebar-nav > .sidebar-brand a {
+      color: #999999;
+    }
+
+    .sidebar-nav > .sidebar-brand a:hover {
+      color: #fff;
+      background: none;
+    }
+
+    @media(max-width: 768px) {
+      #wrapper {
+        padding-left: 50px;
+      }
+
+      #wrapper.toggled {
+        padding-left: 0;
+      }
+
+      #sidebar-wrapper {
+        width: 50px;
+      }
+
+      #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+      }
+
+      #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+      }
+
+      #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 992px) {
+      #wrapper {
+        padding-left: 200px;
+      }
+
+      #wrapper.toggled {
+        padding-left: 0;
+      }
+
+      #sidebar-wrapper {
+        width: 200px;
+      }
+
+      #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+      }
+
+      #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+      }
+
+      #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+      }
+    }
+
+  @media (min-width: 992px) {
+      #wrapper {
+        padding-left: 250px;
+      }
+
+      #wrapper.toggled {
+        padding-left: 0;
+      }
+
+      #sidebar-wrapper {
+        width: 250px;
+      }
+
+      #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+      }
+
+      #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+      }
+
+      #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+      }
+    }    
+
+    .back_button_style{
+      font-size: 125%;
+      background-color: white;
+      border: 1px solid #ccc; 
+      border-radius: 5px;
+    }
+
+    .back_button_style:hover{
+      background-color: #ddd;
+    }
+
+    .fav_button{
+      font-size: 125%;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .fav_button:hover{
+      background-color: #ddd;
+      color:red;
+
+    }
+
+    .trash_fav{
+     padding: 2px; color: #ccc;font-size: 20px;
+    }
+   .trash_fav:hover{
+    color: red;
+    }
+  body {
+    overflow-x: hidden;
+    background-color: #F0F0F0;
+
+    }
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="">
+        <div class="row">
+          <div class="col-md-2 col-sm-2 col-xs-2 text-left">
+            <span style="font-size:200%;"><i id="toggle-menu" class="fa fa-bars fa-8" aria-hidden="true"></i></span>
+
+          </div>
+          <div class="col-md-10 col-sm-10 col-xs-10 text-center">
+            <div class="image-container center-block">
+             <a href="http://www.sunlightfoundation.com" target="_Blank"><img style="float:center; display: inline-block;" src="Assets/images/logo.png" class="img-responsive center-block"></a>
+             <span style="font-weight:bolder; font-size: 125%">Congress API<span>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </nav>
+
+
+   <div id="wrapper">
+
+    <div id="sidebar-wrapper">
+      <ul class="sidebar-nav" ng-controller="fav_ctrl">
+        <li id="legis_menu" class="sidebar-brand">
+          <a href="">
+            <i class="fa fa-user" style="position: relative; left:-20px;" aria-hidden="true"></i> <div style="display: inline;" class="hidden-xs">Legislators</div>
+          </a>
+        </li>
+        <li id="bills_menu" class="sidebar-brand">
+          <a href="">
+            <i class="fa fa-sign-in" style="position: relative; left:-20px;" aria-hidden="true"></i> <div style="display: inline;" class="hidden-xs"> Bills</div>
+          </a>
+        </li>
+        <li id="comm_menu" class="sidebar-brand">
+          <a href="">
+            <i class="fa fa-file-o" style="position: relative; left:-20px;" aria-hidden="true"></i> <div style="display: inline;" class="hidden-xs"> Committees</div>
+          </a>
+        </li>
+        <li id="favs_menu" ng-click="update()" class="sidebar-brand">
+          <a href="">
+            <i class="fa fa-star" style="position: relative; left:-20px;" aria-hidden="true"></i> <div style="display: inline;" class="hidden-xs"> Favorites </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div id="page-content-wrapper">
+      <div class="container-fluid">
+
+        <div id="Legislators">
+          <h2>Legislators</h2>
+          <hr style="border-top: 1px solid #ccc" />
+          <div style="background-color: white; border-radius: 5px ;box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.16); " id="Legislators_Carousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner" role="listbox">
+              <div class="item active">
+
+                <ul class="nav nav-tabs">             
+                  <li class="active"><a style="text-color:white;" data-toggle="tab" href="#ByState">By State</a></li>
+                  <li><a data-toggle="tab" style="text-color:white;" href="#House">House</a></li>
+                  <li><a data-toggle="tab" style="text-color:white;" href="#Senate">Senate</a></li>
+                </ul>
+
+                <div style="border: 1.5px solid #f1f1f1;border-top:0px; border-radius:2px;padding:25px;" class="tab-content">
+                  <div id="ByState" ng-controller="legis_ctrl_state" class="tab-pane fade in active">
+
+                    <div  class="row well well-sm" style="margin-bottom: 0px;margin-left: 0px; margin-right: 0px;">
+                      <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                        <h4>Legislators by State</h4>
+                      </div>
+                      <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                        <form>
+                          <select class="form-control" ng-model="search.state_name" placeholder="Select  State">
+                            <option value=""></option>
+                            <option value="Alabama">Alabama</option>
+                            <option value="Alaska">Alaska</option>
+                            <option value="Arizona">Arizona</option>
+                            <option value="Arkansas">Arkansas</option>
+                            <option value="California">California</option>
+                            <option value="Colorado">Colorado</option>
+                            <option value="Connecticut">Connecticut</option>
+                            <option value="Delaware">Delaware</option>
+                            <option value="District of Columbia">District of Columbia</option>
+                            <option value="Florida">Florida</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Hawaii">Hawaii</option>
+                            <option value="Idaho">Idaho</option>
+                            <option value="Illinois">Illinois</option>
+                            <option value="Indiana">Indiana</option>
+                            <option value="Iowa">Iowa</option>
+                            <option value="Kansas">Kansas</option>
+                            <option value="Kentucky">Kentucky</option>
+                            <option value="Louisiana">Louisiana</option>
+                            <option value="Maine">Maine</option>
+                            <option value="Maryland">Maryland</option>
+                            <option value="Massachusetts">Massachusetts</option>
+                            <option value="Michigan">Michigan</option>
+                            <option value="Minnesota">Minnesota</option>
+                            <option value="Mississippi">Mississippi</option>
+                            <option value="Missouri">Missouri</option>
+                            <option value="Montana">Montana</option>
+                            <option value="Nebraska">Nebraska</option>
+                            <option value="Nevada">Nevada</option>
+                            <option value="New Hampshire">New Hampshire</option>
+                            <option value="New Jersey">New Jersey</option>
+                            <option value="New Mexico">New Mexico</option>
+                            <option value="New York">New York</option>
+                            <option value="North Carolina">North Carolina</option>
+                            <option value="North Dakota">North Dakota</option>
+                            <option value="Ohio">Ohio</option>
+                            <option value="Oklahoma">Oklahoma</option>
+                            <option value="Oregon">Oregon</option>
+                            <option value="Pennsylvania">Pennsylvania</option>
+                            <option value="Rhode Island">Rhode Island</option>
+                            <option value="South Carolina">South Carolina</option>
+                            <option value="South Dakota">South Dakota</option>
+                            <option value="Tennessee">Tennessee</option>
+                            <option value="Texas">Texas</option>
+                            <option value="Utah">Utah</option>
+                            <option value="Vermont">Vermont</option>
+                            <option value="Virginia">Virginia</option>
+                            <option value="Washington">Washington</option>
+                            <option value="West Virginia">West Virginia</option>
+                            <option value="Wisconsin">Wisconsin</option>
+                            <option value="Wyoming">Wyoming</option>
+                          </select>
+                        </form>
+                      </div>
+                    </div>  
+                    <div class="table-responsive">
+                      <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                        <tr>
+                          <th>
+                            Party
+                          </th>
+                          <th>
+                            Name
+                          </th>
+                          <th>
+                            Chamber
+                          </th>
+                          <th>
+                            District
+                          </th>
+                          <th>
+                            State
+                          </th>
+                          <th>  
+                          </th>
+                        </tr>
+                        <tr pagination-id="legis_state" dir-paginate="result in leg_state_data|filter:search|itemsPerPage:10">
+                          <td>
+                            <img src={{(result.party=="R")?"Assets/images/r.png":(result.party=="D")?"Assets/images/d.png":"Assets/images/i.png"}}  width="25px" height="25px" class="img-responsive" />
+                          </td>
+                          <td>
+                            {{result.last_name}}, {{result.first_name}}
+                          </td>
+                          <td style="text-transform: capitalize;">
+                            <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px; display: inline;" width="30px" height="30px">{{result.chamber}}
+                          </td>
+                          <td>
+                            {{(result.district==null)?"N/A":"District "+result.district}}
+                          </td>
+                          <td>
+                            {{result.state_name}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-primary" ng-click="vd(result.bioguide_id)">View Details</button>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="text-center">
+                      <dir-pagination-controls pagination-id="legis_state" max-size="10" direction-links="true" boundary-links="true">
+                      </dir-pagination-controls>
+                    </div>   
+                  </div>
+                  <div id="House" ng-controller="legis_ctrl_state" class="tab-pane fade">
+
+                    <div  class="row well well-sm" style="margin-bottom: 0px;margin-left: 0px; margin-right: 0px;">
+                      <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                        <h4>Legislators by House</h4>
+                      </div>
+                      <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                        <form>
+                          <input type="text" class="form-control" ng-model="search.last_name" placeholder="Search criteria">
+                        </form>
+                      </div>
+                    </div> 
+                    <div class="table-responsive"> 
+                      <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                        <tr>
+                          <th>
+                            Party
+                          </th>
+                          <th>
+                            Name
+                          </th>
+                          <th>
+                            Chamber
+                          </th>
+                          <th>
+                            District
+                          </th>
+                          <th>
+                            State
+                          </th>
+                          <th>  
+                          </th>
+                        </tr>
+                        <tr pagination-id="legis_house" dir-paginate="result in leg_house_data|filter:search|itemsPerPage:10">
+                          <td>
+                            <img src={{(result.party=="R")?"Assets/images/r.png":(result.party=="D")?"Assets/images/d.png":"Assets/images/i.png"}}  width="25px" height="25px" class="img-responsive" />
+                          </td>
+                          <td>
+                            {{result.last_name}}, {{result.first_name}}
+                          </td>
+                          <td style="text-transform: capitalize;">
+                            <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px; display: inline;" width="30px" height="30px">{{result.chamber}}
+                          </td>
+                          <td>
+                            {{(result.district==null)?"N/A":"District "+result.district}}
+                          </td>
+                          <td>
+                            {{result.state_name}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-primary" ng-click="vd(result.bioguide_id)">View Details</button>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="text-center">
+                      <dir-pagination-controls pagination-id="legis_house" max-size="10" direction-links="true" boundary-links="true">
+                      </dir-pagination-controls>
+                    </div>
+                  </div>
+                  <div id="Senate" ng-controller="legis_ctrl_state" class="tab-pane fade">
+
+                    <div  class="row well well-sm" style="margin-bottom: 0px; margin-left: 0px; margin-right: 0px;">
+                      <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                        <h4>Legislators by Senate</h4>
+                      </div>
+                      <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                        <form>
+                          <input type="text" class="form-control" ng-model="search.last_name" placeholder="Search criteria">
+                        </form>
+                      </div>
+                    </div>  
+                    <div class="table-responsive">
+                      <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                        <tr>
+                          <th>
+                            Party
+                          </th>
+                          <th>
+                            Name
+                          </th>
+                          <th>
+                            Chamber
+                          </th>
+                          <th>
+                            District
+                          </th>
+                          <th>
+                            State
+                          </th>
+                          <th>  
+                          </th>
+                        </tr>
+                        <tr pagination-id="legis_senate" dir-paginate="result in leg_senate_data|filter:search|itemsPerPage:10">
+                          <td>
+                            <img src={{(result.party=="R")?"Assets/images/r.png":(result.party=="D")?"Assets/images/d.png":"Assets/images/i.png"}}  width="25px" height="25px" class="img-responsive" />
+                          </td>
+                          <td>
+                            {{result.last_name}}, {{result.first_name}}
+                          </td>
+                          <td style="text-transform: capitalize;">
+                            <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px; display: inline;" width="30px" height="30px">{{result.chamber}}
+                          </td>
+                          <td>
+                            {{(result.district==null)?"N/A":"District "+result.district}}
+                          </td>
+                          <td>
+                            {{result.state_name}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-primary" ng-click="vd(result.bioguide_id)">View Details</button>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="text-center">
+                      <dir-pagination-controls pagination-id="legis_senate" max-size="10" direction-links="true" boundary-links="true">
+                      </dir-pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-sm-6 col-xs-8 col-md-6">
+                      <h2><button id="legis_back_button" class="back_button_style" ><i class="fa fa-angle-left" style="padding-right: 10px;padding-left: 10px;" aria-hidden="true"></i></button> Details</h2>
+                    </div>
+                    <div class="col-sm-6 col-xs-4 col-md-6 text-right">
+                      <h2><button id="legis_fav_button" class="fav_button" style=""><span style="display: none;" id="temp_leg_bio_id"></span><i id="legis_fav_icon" class="fa fa-star-o" style="padding: 2px; color: #ccc; font-size: 30px; " aria-hidden="true"></i></button></h2>
+                    </div>
+                  </div>
+                  <hr style="border-top: 1px solid #ddd; margin-bottom: 5px;" />
+                  <div class="row">
+                    <div class="col-xs-12 col-md-6 col-sm-12">
+                      <table class="table">
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-md-6 col-xs-12 col-sm-6">
+                                <img id="leg_image" width="70%" class="img-responsive center-block"
+                                style="">
+                              </div>
+                              <div class="col-md-6 col-xs-12 col-sm-6">
+                                <table class="table">
+                                  <tr>
+                                    <td>
+                                      <span id="leg_name"></span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <a id="leg_mail" href="mailto:"></a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      Chamber: <span id="leg_chamber"></span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      Contact: <span id="leg_phone"></span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <img id="leg_party_image" src="" class="img-responsive" width="30px" height="30px" style="padding-right: 10px; display: inline;">
+                                      <span id="leg_party"></span>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              start term
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="leg_start_term"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              End term
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="leg_end_term"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Term
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <div class="progress">
+                                <div id="leg_progress" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
+                                  60%
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Office
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="leg_office"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              State
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="leg_state"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Fax
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <a href="" id="leg_fax"></a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Birthday
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="leg_birthday"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Social Links
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <a href="" id="leg_twitter">
+                                <img width="50px" height="50px" style="display: inline; padding-right: 10px" class="img-responsive" src="Assets/images/t.png" />
+                              </a>
+                              <a href="" id="leg_facebook">
+                                <img style="display: inline; padding-right: 10px" width="50px" height="50px" class="img-responsive"  src="Assets/images/f.png" />
+                              </a>
+                              <a href="" id="leg_website">
+                                <img style="display: inline; padding-right: 10px" width="50px" height="50px" class="img-responsive"  src="Assets/images/w.png" />
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="col-xs-12 col-md-6 col-sm-12">
+                      <h4>Committees</h4>
+                      <div class="table-responsive">
+                        <table id="legis_committees" class="table">
+                          <tr>
+                            <th>
+                              Chamber
+                            </th>
+                            <th>
+                              Committee ID
+                            </th>
+                            <th class="hidden-xs">
+                              Name
+                            </th>
+                          </tr>
+                        </table>
+                      </div>
+                      <h4>Bills</h4>
+                      <div class="table-responsive">
+                        <table id="legis_bills" class="table">
+                          <tr>
+                            <th>
+                              Bill ID
+                            </th>
+                            <th class="hidden-xs">
+                              Title
+                            </th>
+                            <th class="hidden-xs">
+                              Chamber
+                            </th>
+                            <th class="hidden-xs">
+                              Bill Type
+                            </th>
+                            <th class="hidden-xs">
+                              Congress
+                            </th>
+                            <th>
+                              Link
+                            </th>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div id="Committees">
+          <h2>Committees</h2>
+          <hr style="border-top: 1px solid #ccc" />
+          <div style="background-color: white; border-radius: 5px ;box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.16); " >
+            <div>
+              <div class="item active">
+
+                <ul class="nav nav-tabs">             
+                  <li class="active"><a style="text-color:white;" data-toggle="tab" href="#ByHouse">House</a></li>
+                  <li><a data-toggle="tab" style="text-color:white;" href="#BySenate">Senate</a></li>
+                  <li><a data-toggle="tab" style="text-color:white;" href="#ByJoint">Joint</a></li>
+                </ul>
+
+                <div style="border: 1.5px solid #f1f1f1;border-top:0px; border-radius:2px;padding:25px;" class="tab-content">
+                  <div id="ByHouse" ng-controller="comm_ctrl" class="tab-pane fade in active">
+
+                    <div style="margin-bottom: 0px;margin-left: 0px;margin-right: 0px;" class="row well well-sm">
+                      <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                        <h4>Committees by house</h4>
+                      </div>
+                      <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                        <form>
+                          <input type="text" class="form-control" ng-model="search.committee_id" placeholder="Search">
+                        </form>
+                      </div>
+                    </div>  
+                    <div class="table-responsive">
+                      <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                        <tr>
+                          <th>
+
+                          </th>
+                          <th>
+                            Chamber
+                          </th>
+                          <th>
+                            Committee ID
+                          </th>
+                          <th>
+                            Name
+                          </th>
+                          <th>
+                            Parent Committee
+                          </th>
+                          <th>  
+                            Contact
+                          </th>
+                          <th>
+                            Office
+                          </th>
+                        </tr>
+                        <tr pagination-id="comm_house" dir-paginate="result in comm_house_data|filter:search|itemsPerPage:10">
+                          <td>
+                            <button class="fav_button" ng-click="cfc(result.committee_id,1)"><i id={{result.committee_id}} class={{result.favorite}} style={{result.style}} aria-hidden="true"></i></button>
+                          </td>
+                          <td style="text-transform: capitalize;">
+                            <img src="Assets/images/h.png" width="20px" height="20px" style="display: inline; margin-right: 10px;" >{{result.chamber}}
+                          </td>
+                          <td>
+                            {{result.committee_id}}
+                          </td>
+                          <td>
+                            {{result.name}}
+                          </td>
+                          <td>
+                            {{result.parent_committee_id}}
+                          </td>
+                          <td>
+                            {{result.phone}}
+                          </td>
+                          <td>
+                            {{(result.office==null)?"N/A":result.office}}
+                          </td>
+                        </tr>
+                      </table>
+                  </div>
+                  <div class="text-center">
+                    <dir-pagination-controls pagination-id="comm_house" max-size="10" direction-links="true" boundary-links="true">
+                    </dir-pagination-controls>
+                  </div>
+                </div>
+                <div id="BySenate" ng-controller="comm_ctrl" class="tab-pane fade">
+                  <div style="margin-bottom: 0px; margin-left: 0px; margin-right: 0px;" class="row well well-sm">
+                    <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                      <h4>Committees by Senate</h4>
+                    </div>
+                    <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                      <form>
+                        <input type="text" class="form-control" ng-model="search.committee_id" placeholder="Search">
+                      </form>
+                    </div>
+                  </div>
+                <div class="table-responsive">
+                  <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                    <tr>
+                      <th>
+
+                      </th>
+                      <th>
+                        Chamber
+                      </th>
+                      <th>
+                        Committee ID
+                      </th>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Parent Committee
+                      </th>
+                    </tr>
+                    <tr pagination-id="comm_senate" dir-paginate="result in comm_senate_data|filter:search|itemsPerPage:10">
+                      <td>
+                        <button class="fav_button" ng-click="cfc(result.committee_id,2)"><i id={{result.committee_id}} class={{result.favorite}} style={{result.style}} aria-hidden="true"></i></button>
+                      </td>
+                      <td style="text-transform: capitalize;">
+                        <img src="Assets/images/s.png" width="20px" height="20px" style="display: inline; margin-right: 10px;"> {{result.chamber}}
+                      </td>
+                      <td>
+                        {{result.committee_id}}
+                      </td>
+                      <td>
+                        {{result.name}}
+                      </td>
+                      <td>
+                        {{result.parent_committee_id}}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                  <div class="text-center">
+                    <dir-pagination-controls pagination-id="comm_senate" max-size="10" direction-links="true" boundary-links="true">
+                    </dir-pagination-controls>
+                  </div>
+              </div>
+              <div id="ByJoint" ng-controller="comm_ctrl" class="tab-pane fade">
+
+                <div style="margin-right: 0px; margin-left: 0px; margin-bottom: 0px;" class="row well well-sm">
+                  <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                    <h4>Joint Committees</h4>
+                  </div>
+                  <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                    <form>
+                      <input type="text" class="form-control" ng-model="search.committee_id" placeholder="Search">
+                    </select>
+                  </form>
+                </div>
+              </div>  
+              <div class="table-responsive">
+                <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                  <tr>
+                    <th>
+
+                    </th>
+                    <th>
+                      Chamber
+                    </th>
+                    <th>
+                      Committee ID
+                    </th>
+                    <th>
+                      Name
+                    </th>
+                  </tr>
+                  <tr pagination-id="comm_joint" dir-paginate="result in comm_joint_data|filter:search|itemsPerPage:10">
+                    <td>
+                      <button class="fav_button" ng-click="cfc(result.committee_id,3)"><i id={{result.committee_id}} class={{result.favorite}} style={{result.style}} aria-hidden="true"></i></button>
+                    </td>
+                    <td style="text-transform: capitalize;">
+                      <img src="Assets/images/s.png" width="20px" height="20px" style="display: inline; margin-right: 10px;" >{{result.chamber}}
+                    </td>
+                    <td>
+                      {{result.committee_id}}
+                    </td>
+                    <td>
+                      {{result.name}}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+                <div class="text-center">
+                  <dir-pagination-controls pagination-id="comm_joint" max-size="10" direction-links="true" boundary-links="true">
+                  </dir-pagination-controls>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <div id="Bills">
+
+    <h2>Bills</h2>
+    <hr style="border-top: 1px solid #ccc" />
+    <div style="background-color: white; border-radius: 5px ;box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.16); " id="Bills_Carousel" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+
+          <ul class="nav nav-tabs">             
+            <li class="active"><a style="text-color:white;" data-toggle="tab" href="#Active">Active bills</a></li>
+            <li><a data-toggle="tab" style="text-color:white;" href="#New">New Bills</a></li>
+          </ul>
+
+          <div style="border: 1.5px solid #f1f1f1;border-top:0px; border-radius:2px;padding:25px;" class="tab-content">
+            <div id="Active" ng-controller="bills_ctrl" class="tab-pane fade in active">
+
+              <div style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px;" class="row well well-sm">
+                <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                  <h4>Active bills</h4>
+                </div>
+                <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                  <form>
+                    <input type="text" class="form-control" ng-model="search.bill_id" placeholder="Search">
+                  </form>
+                </div>
+              </div>  
+              <div class="table-responsive">
+                <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+
+                  <tr>
+                    <th>
+                      Bill ID
+                    </th>
+                    <th>
+                      Bill Type
+                    </th>
+                    <th>
+                      Title
+                    </th>
+                    <th>
+                      Chamber
+                    </th>
+                    <th>
+                      Introducted on
+                    </th>
+                    <th>  
+                      Sponsor
+                    </th>
+                    <th>
+
+                    </th>
+                  </tr>
+                  <tr pagination-id="bill_active" dir-paginate="result in bill_active_data|filter:search|itemsPerPage:10">
+                    <td style="text-transform: uppercase;">
+                      {{result.bill_id}}
+                    </td>
+                    <td style="text-transform: uppercase;">
+                      {{result.bill_type}}
+                    </td>
+                    <td>
+                      {{result.official_title}}
+                    </td>
+                    <td style="text-transform: capitalize;">
+                      <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px; display: inline;" width="30px" height="30px">{{result.chamber}}
+                    </td>
+                    <td>
+                      {{result.introduced_on}}
+                    </td>
+                    <td>
+                      {{result.sponsor.title}}. {{result.sponsor.last_name}}, {{result.sponsor.first_name}}
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-primary" ng-click="bvd(result.bill_id)">View Details</button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="text-center">
+                <dir-pagination-controls pagination-id="bill_active" max-size="10" direction-links="true" boundary-links="true">
+                </dir-pagination-controls>
+              </div>
+            </div>
+            <div id="New" ng-controller="bills_ctrl" class="tab-pane fade">
+
+              <div style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px;" class="row well well-sm">
+                <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                  <h4>New bills</h4>
+                </div>
+                <div class="col-md-3 col-sm-5 col-xs-6 col-md-offset-3 col-sm-offset-1 text-right">
+                  <form>
+                    <input type="text" class="form-control" ng-model="search.state_name" placeholder="Search criteria">
+                  </form>
+                </div>
+              </div>  
+              <div class="table-responsive">
+                <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+
+                  <tr>
+                    <th>
+                      Bill ID
+                    </th>
+                    <th>
+                      Bill Type
+                    </th>
+                    <th>
+                      Title
+                    </th>
+                    <th>
+                      Chamber
+                    </th>
+                    <th>
+                      Introducted on
+                    </th>
+                    <th>  
+                      Sponsor
+                    </th>
+                    <th>
+
+                    </th>
+                  </tr>
+                  <tr pagination-id="bill_new" dir-paginate="result in bill_old_data|filter:search|itemsPerPage:10">
+                    <td style="text-transform: uppercase;">
+                      {{result.bill_id}}
+                    </td>
+                    <td style="text-transform: uppercase;">
+                      {{result.bill_type}}
+                    </td>
+                    <td>
+                      {{result.official_title}}
+                    </td>
+                    <td style="text-transform: capitalize;">
+                      <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px; display: inline;" width="30px" height="30px">{{result.chamber}}
+                    </td>
+                    <td>
+                      {{result.introduced_on}}
+                    </td>
+                    <td>
+                      {{result.sponsor.title}}. {{result.sponsor.last_name}}, {{result.sponsor.first_name}}
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-primary" ng-click="bvd(result.bill_id)">View Details</button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="text-center">
+                <dir-pagination-controls pagination-id="bill_new" max-size="10" direction-links="true" boundary-links="true">
+                </dir-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6 col-xs-8 col-md-6">
+                <h2><button id="bills_back_button" class="back_button_style" ><i class="fa fa-angle-left" style="padding-right: 10px;padding-left: 10px;" aria-hidden="true"></i></button> Details</h2>
+              </div>
+              <div class="col-sm-6 col-xs-4 col-md-6 text-right">
+                <h2><button id="bills_fav_button" class="fav_button" style=""><span style="display: none;" id="temp_bill_bill_id"></span><i id="bills_fav_icon" class="fa fa-star-o" style="padding: 2px; color: #ccc; font-size: 30px; " aria-hidden="true"></i></button></h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 col-md-6 col-xs-12">
+                <table class="table">
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Bill ID</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_bill_id"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Title</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_title"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Bill Type</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_bill_type"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Sponsor</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_sponsor"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold; text-transform:capitalize;">Chamber</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <img id="bill_chamber_image" width="30px" height="30px" src="" class="img-responsive" style="display: inline; padding-right: 10px;"><span style="text-transform: capitalize;" id="bill_chamber"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Status</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_status"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Introduced on</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_introduced_on"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Congress URL</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_congress_url"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Version Status</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_version_status"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="row">
+                        <div class="col-sm-4 col-md-3 col-xs-6">
+                          <span style="font-weight:bold;">Bill URL</span>
+                        </div>
+                        <div class="col-sm-8 col-md-9 col-xs-6">
+                          <span id="bill_bill_url"></span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div style="height: 100%;" class="col-sm-6 col-md-6 col-xs-12">
+                <object id="bill_object_pdf" data="data/test.pdf" width="100%" height="600em" type="application/pdf"></object>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="Favorites">
+
+    <h2>Favorites</h2>
+    <hr style="border-top: 1px solid #ccc" />
+    <div style="background-color: white; border-radius: 5px ;box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.16); " id="Favorites_Carousel" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+
+          <ul class="nav nav-tabs">             
+            <li class="active"><a style="text-color:white;" data-toggle="tab" href="#Legislators_k">Legislators</a></li>
+            <li><a data-toggle="tab" style="text-color:white;" href="#Bills_k">Bills</a></li>
+            <li><a data-toggle="tab" style="text-color:white;" href="#Committees_k">Committees</a></li>
+          </ul>
+
+          <div style="border: 1.5px solid #f1f1f1;border-top:0px; border-radius:2px;padding:25px;" class="tab-content">
+            <div id="Legislators_k" ng-controller="fav_ctrl" class="tab-pane fade in active">
+
+              <div style="margin-left: 0px; margin-bottom: 0px; margin-right: 0px;" class="row well well-sm">
+                <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                  <h4>Favorite Legislators</h4>
+                </div>
+              </div>  
+              <div class="table-responsive">
+                <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                  <tr>
+                    <th>
+
+                    </th>
+                    <th>
+                      Image
+                    </th>
+                    <th>
+                      Party
+                    </th>
+                    <th>
+                      Name
+                    </th>
+                    <th>
+                      Chamber
+                    </th>
+                    <th>  
+                      State
+                    </th>
+                    <th>
+                      Email
+                    </th>
+                    <th>
+
+                    </th>
+                  </tr>
+                  <tr ng-repeat="result in fav_legs_data">
+                    <td>
+                      <button id="leg_fav_button" class="fav_button" ng-click="dell(result.bioguide_id)">
+                        <i class="fa fa-trash-o" aria-hidden="true" class="trash_fav"></i></button>
+                      </td>
+                      <td style="text-transform: capitalize;">
+                        <img src={{"https://theunitedstates.io/images/congress/original/"+result.bioguide_id+".jpg"}} width="30px" height="40px">
+                      </td>
+                      <td>
+                        <img src={{(result.party=="R")?"Assets/images/r.png":(result.party=="D")?"Assets/images/d.png":"Assets/images/i.png"}} class="img-responsive" width="30px" height="30px">
+                      </td>
+                      <td>
+                        {{result.last_name}}, {{result.first_name}}
+                      </td>
+                      <td style="text-transform: capitalize;">
+                        <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px;" width="30px" height="30px">{{result.chamber}}
+                      </td>
+                      <td>
+                        {{result.state_name}}
+                      </td>
+                      <td>
+                        <a href="mailto:{{(result.oc_email==null)?"N/A":result.oc_email}}">{{(result.oc_email==null)?"N/A":result.oc_email}}</a>
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-primary" ng-click="fvdl(result.bioguide_id)">View Details</button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div id="Committees_k" ng-controller="fav_ctrl" class="tab-pane fade">
+
+                <div style="margin-right: 0px; margin-left: 0px; margin-bottom: 0px;" class="row well well-sm">
+                  <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                    <h4>Favorite Committees</h4>
+                  </div>
+                </div>  
+                <div class="table-responsive">
+                  <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                    <tr>
+                      <th>
+
+                      </th>
+                      <th>
+                        Chamber
+                      </th>
+                      <th>
+                        Committee ID
+                      </th>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Parent Committee
+                      </th>
+                      <th>
+                        Sub Committee  
+                      </th>
+                    </tr>
+                    <tr ng-repeat="result in fav_comm_data">
+                      <td>
+                        <button id="comm_fav_button" class="fav_button" ng-click="delc(result.committee_id)">
+                          <i class="fa fa-trash-o" aria-hidden="true" class="trash_fav"></i></button>
+                        </td>
+                        <td style="text-transform: capitalize;">
+                          <img src={{(result.chamber=="senate"?"Assets/images/s.png":"Assets/images/h.png")}} style="display: inline; padding-right: 2px;" width="30px" height="30px">
+                          {{result.chamber}}
+                        </td>
+                        <td>
+                          {{result.committee_id}}
+                        </td>
+                        <td>
+                          {{result.name}}
+                        </td>
+                        <td>
+                          {{result.parent_committee_id}}
+                        </td>
+                        <td style="text-transform: capitalize;">
+                          {{result.subcommittee}}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div id="Bills_k" ng-controller="fav_ctrl" class="tab-pane fade">
+
+                  <div style="margin-bottom: 0px;margin-right: 0px; margin-left: 0px;" class="row well well-sm">
+                    <div class="col-md-6 col-sm-6 col-xs-6" style="border-collapse:separate;">
+                      <h4>Favorite Bills</h4>
+                    </div>
+                  </div>  
+                  <div class="table-responsive">
+                    <table style="border: 1px solid #ccc; border-collapse:separate; border-top: 0px; border-radius: 0px 0px 5px 5px; padding:15px; padding-top:0px;" class="table table-hover">
+                      <tr>
+                        <th>
+
+                        </th>
+                        <th>
+                          Bill ID
+                        </th>
+                        <th>
+                          Bill Type
+                        </th>
+                        <th>
+                          Title
+                        </th>
+                        <th>
+                          Chamber
+                        </th>
+                        <th>  
+                          Introducted on
+                        </th>
+                        <th>
+                          Sponsor
+                        </th>
+                        <th>
+
+                        </th>
+                      </tr>
+                      <tr ng-repeat="result in fav_bill_data">
+                        <td>
+                          <button id="bill_fav_button" class="fav_button" ng-click="delb(result.committee_id)">
+                            <i class="fa fa-trash-o" aria-hidden="true" class="trash_fav"></i></button>  
+                          </td>
+                          <td style="text-transform: uppercase;">
+                            {{result.bill_id}}
+                          </td>
+                          <td style="text-transform: uppercase;">
+                            {{result.bill_type}}
+                          </td>
+                          <td>
+                            {{result.official_title}}
+                          </td>
+                          <td>
+                            <img src={{(result.chamber=="senate")?"Assets/images/s.png":"Assets/images/h.png"}} class="img-responsive" style="padding-right: 5px;" width="30px" height="30px">{{result.chamber}}
+                          </td>
+                          <td>
+                            {{result.introduced_on}}
+                          </td>
+                          <td>
+                            {{result.sponsor.title}}. {{result.sponsor.last_name}}, {{result.sponsor.first_name}}
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-primary" ng-click="fvdb(result.bill_id)">View Details</button>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="item">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-sm-6 col-xs-8 col-md-6">
+                      <h2><button id="flegis_back_button" class="back_button_style" ><i class="fa fa-angle-left" style="padding-right: 10px;padding-left: 10px;" aria-hidden="true"></i></button> Details</h2>
+                    </div>
+                    <div class="col-sm-6 col-xs-4 col-md-6 text-right">
+                    </div>
+                  </div>
+                  <hr style="border-top: 1px solid #ddd; margin-bottom: 5px;" />
+                  <div class="row">
+                    <div class="col-xs-12 col-md-6 col-sm-12">
+                      <table class="table">
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-md-6 col-xs-12 col-sm-6">
+                                <img id="fleg_image" class="img-responsive center-block"
+                                style="">
+                              </div>
+                              <div class="col-md-6 col-xs-12 col-sm-6">
+                                <table class="table">
+                                  <tr>
+                                    <td>
+                                      <span id="fleg_name"></span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <a id="fleg_mail" href="mailto:"></a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      Chamber: <span id="fleg_chamber"></span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      Contact: <span id="fleg_phone"></span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <img id="fleg_party_image" src="" class="img-responsive" width="30px" height="30px" style="padding-right: 10px; display: inline;">
+                                      <span id="fleg_party"></span>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              start term
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="fleg_start_term"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              End term
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="fleg_end_term"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Term
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <div class="progress">
+                                <div id="fleg_progress" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
+                                  60%
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Office
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="fleg_office"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              State
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="fleg_state"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Fax
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <a href="" id="fleg_fax"></a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Birthday
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <span id="fleg_birthday"></span>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="col-sm-3 col-md-3 hidden-xs">
+                              Social Links
+                            </div>
+                            <div class="col-sm-9 col-md-9 col-xs-12">
+                              <a href="" id="fleg_twitter">
+                                <img width="50px" height="50px" style="display: inline; padding-right: 10px" class="img-responsive" src="Assets/images/t.png" />
+                              </a>
+                              <a href="" id="fleg_facebook">
+                                <img style="display: inline; padding-right: 10px" width="50px" height="50px" class="img-responsive"  src="Assets/images/f.png" />
+                              </a>
+                              <a href="" id="fleg_website">
+                                <img style="display: inline; padding-right: 10px" width="50px" height="50px" class="img-responsive"  src="Assets/images/w.png" />
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="col-xs-12 col-md-6 col-sm-12">
+                      <h4>Committees</h4>
+                      <div class="table-responsive">
+                        <table id="flegis_committees" class="table">
+                          <tr>
+                            <th>
+                              Chamber
+                            </th>
+                            <th>
+                              Committee ID
+                            </th>
+                            <th class="hidden-xs">
+                              Name
+                            </th>
+                          </tr>
+                        </table>
+                      </div>
+                      <h4>Bills</h4>
+                      <div class="table-responsive">
+                        <table id="flegis_bills" class="table">
+                          <tr>
+                            <th>
+                              Bill ID
+                            </th>
+                            <th class="hidden-xs">
+                              Title
+                            </th>
+                            <th class="hidden-xs">
+                              Chamber
+                            </th>
+                            <th class="hidden-xs">
+                              Bill Type
+                            </th>
+                            <th class="hidden-xs">
+                              Congress
+                            </th>
+                            <th>
+                              Link
+                            </th>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-sm-6 col-xs-8 col-md-6">
+                      <h2><button id="fbills_back_button" class="back_button_style" ><i class="fa fa-angle-left" style="padding-right: 10px;padding-left: 10px;" aria-hidden="true"></i></button> Details</h2>
+                    </div>
+                    <div class="col-sm-6 col-xs-4 col-md-6 text-right">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6 col-md-6 col-xs-12">
+                      <table class="table">
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Bill ID</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_bill_id"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Title</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_title"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Bill Type</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_bill_type"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Sponsor</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_sponsor"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold; text-transform:capitalize;">Chamber</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <img id="fbill_chamber_image" width="30px" height="30px" src="" class="img-responsive" style="display: inline; padding-right: 10px;"><span style="text-transform: capitalize;" id="fbill_chamber"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Status</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_status"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Introduced on</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_introduced_on"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Congress URL</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_congress_url"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Version Status</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_version_status"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-sm-4 col-md-3 col-xs-6">
+                                <span style="font-weight:bold;">Bill URL</span>
+                              </div>
+                              <div class="col-sm-8 col-md-9 col-xs-6">
+                                <span id="fbill_bill_url"></span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div style="height: 100%;" class="col-sm-6 col-md-6 col-xs-12">
+                      <object id="fbill_object_pdf" data="data/test.pdf" width="100%" height="600em" type="application/pdf"></object>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- jQuery -->
+
+  <!-- Menu Toggle Script -->
+  
+  <script src="https://use.fontawesome.com/636bd235d6.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.16.0/moment.min.js" type="text/javascript"></script>    
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js" type="text/javascript" ></script>
+  <script src="test.js" type="text/javascript" ></script>
+  <script src="Assets/js/pagination.js" type="text/javascript" ></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>
