@@ -1,0 +1,19 @@
+{
+  "name": "backed",
+  "version": "1.0.0",
+  "description": "Just a backend proxy",
+  "main": "index.js",
+  "scripts": {
+    "test": "node inde.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pentyala/Backend-Node.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pentyala/Backend-Node/issues"
+  },
+  "homepage": "https://github.com/pentyala/Backend-Node#readme"
+}
